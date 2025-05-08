@@ -1,24 +1,25 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react({
-    jsxRuntime: 'automatic',
-    jsxImportSource: 'react'
-  })],
-  resolve: {
-    mainFields: ['module', 'jsnext:main', 'jsnext', 'browser', 'main'],
-    alias: {
-      'react/jsx-runtime': 'react/jsx-runtime'
-    }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react/jsx-runtime']
-  },
+  plugins: [react()],
   build: {
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true
+    // Use ESM format for better compatibility
+    target: 'esnext',
+    outDir: 'dist',
+    emptyOutDir: true,
+    minify: 'esbuild',
+    rollupOptions: {
+      // Explicitly mark React as external
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        },
+        format: 'esm'
+      }
     }
   }
 });

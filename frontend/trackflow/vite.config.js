@@ -4,35 +4,20 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [
     react({
-      // Use automatic JSX transform
-      jsxRuntime: 'automatic',
-      // But don't import from 'react/jsx-runtime'
-      jsxImportSource: 'react',
-      // Use explicit React import for JSX
+      // Explicitly configure Babel without custom plugins
       babel: {
-        plugins: [
-          ['@babel/plugin-transform-react-jsx', {
-            runtime: 'automatic'
-          }]
+        babelrc: false,
+        configFile: false,
+        presets: [
+          ['@babel/preset-env', { targets: 'defaults' }],
+          ['@babel/preset-react', { runtime: 'automatic' }]
         ]
       }
     })
   ],
   build: {
-    // Tell Rollup to include CJS modules in its bundle
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true
-    }
-  },
-  resolve: {
-    // Force Vite to use node_modules copies of deps
-    dedupe: ['react', 'react-dom']
-  },
-  optimizeDeps: {
-    // More aggressive deps optimization
-    esbuildOptions: {
-      target: 'esnext'
-    }
+    // Use simpler build settings
+    target: 'es2015',
+    minify: 'esbuild'
   }
 });

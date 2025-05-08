@@ -2,30 +2,23 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({
+    jsxRuntime: 'automatic',
+    jsxImportSource: 'react'
+  })],
   resolve: {
     mainFields: ['module', 'jsnext:main', 'jsnext', 'browser', 'main'],
     alias: {
-      'react': 'react',
-      'react-dom': 'react-dom'
+      'react/jsx-runtime': 'react/jsx-runtime'
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom']
+    include: ['react', 'react-dom', 'react/jsx-runtime']
   },
   build: {
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true
-    },
-    rollupOptions: {
-      external: ['react', 'react-dom'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
-        }
-      }
     }
   }
 });

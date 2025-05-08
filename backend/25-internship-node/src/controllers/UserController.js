@@ -2,8 +2,8 @@
 const userModel = require("../models/UserModel")
 const bcrypt = require("bcrypt");
 const mailUtil = require("../utils/MailUtil")
-const cloudinaryUtil = require("../utils/CloudanryUtil");
 const multer = require("multer");
+const resetkey = "yourresetkey"
 
 const storage = multer.diskStorage({
   destination: "./uploads",
@@ -18,15 +18,15 @@ const upload = multer({
 }).single("profileImage");
 
 const signup = async (req, res) => {
-  
+
   try {
-   
+
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
     req.body.password = hashedPassword;
     const createdUser = await userModel.create(req.body);
-    await mailUtil.sendingMail(createdUser.email,"welcome to Trackflow","this is welcome mail")
-    
+    await mailUtil.sendingMail(createdUser.email, "welcome to Trackflow", "this is welcome mail")
+
 
     res.status(201).json({
       message: "user created..",
@@ -42,19 +42,19 @@ const signup = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  
+
   const email = req.body.email;
   const password = req.body.password;
- 
 
- 
+
+
   const foundUserFromEmail = await userModel.findOne({ email: email }).populate("role");
   console.log(foundUserFromEmail);
-  
+
   if (foundUserFromEmail != null) {
-  
+
     const isMatch = bcrypt.compareSync(password, foundUserFromEmail.password);
-    
+
     if (isMatch == true) {
       res.status(200).json({
         message: "login success",
@@ -72,126 +72,84 @@ const loginUser = async (req, res) => {
   }
 };
 
-//--------->> addUserWithProfileImage----
-const addUserWithProfileImage = async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).json({ message: err.message });
-    }
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    try {
-      // Check if file is uploaded
-      if (!req.file) {
-        return res.status(400).json({ message: "Profile image is required" });
-      }
 
-      // Upload file to Cloudinary
-      const cloudinaryResponse = await cloudinaryUtil.uploadFileToCloudinary(req.file);
-      
-      // Attach image URL to req.body
-      req.body.profileImage = cloudinaryResponse.secure_url;
+    const token = jwt.sign({ id: user._id }, resetkey, { expiresIn: "30m" });
 
-      // Save user data in database
-      const savedUser = await userModel.create(req.body);
 
-      res.status(201).json({
-        message: "User with profileimage created successfully",
-        data: savedUser,
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  });
+    const resetLink = `"http://localhost:5173"/reset-password/${token}`;
+
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "yogeshkarthik1524@gmail.com",
+        pass: "xats arzt onpj rbgz",
+      },
+    });
+
+
+    await transporter.sendMail({
+      from: "yogeshkarthik1524@gmail.com",
+      to: user.email,
+      subject: "Password Reset Link",
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in 15 minutes.</p>`,
+    });
+
+    res.status(200).json({ message: "Reset link sent to your email" });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
 
 
+exports.resetPassword = async (req, res) => {
+  const { newPassword } = req.body;
+  const token = req.params.token;
 
+  try {
 
-const getAllUsers = async (req, res) => {
- 
+    const decoded = jwt.verify(token, resetkey);
+    const userId = decoded.id;
 
-  const users = await userModel.find() //[{}]
+    const user = await userModel.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-  res.json({
-    message: "user fetched successfully",
-    data:users
-  });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("Password reset failed", err);
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
 };
-
-// const addUser1  = async(req,res)=>{
-
-//   //try catch if else...
-//   try{
-
-//       const createdUser = await userModel.create(req.body)
-//       res.status(201).json({
-//           message:"user created..",
-//           data:createdUser
-//       })
-
-
-
-//   }catch(err){
-
-//       res.status(500).json({
-//           message:"error",
-//           data:err
-//       })
-
-//   }
-
-
-
-
-//addUser
-const addUser = async (req, res) => {
-  //req.body,req.params,req.headers,req.query
-  //console.log("request body....", req.body);
-  //insert into roles () values()
-  //database...
-  const savedUser = await  userModel.create(req.body)
-
-  res.json({
-    message:"user created...",
-    data:savedUser
-  });
-};
-//getUser
-//deleteUser
-const deleteUser = async(req,res)=>{
-
-  //delete from roles where id =?
-  //req.params
-//    console.log(req.params.id) //prams object...
-
-  const deletedUser = await userModel.findByIdAndDelete(req.params.id)
-
-  res.json({
-    message:"user deleted successfully..",
-    data:deletedUser
-  })
-
-
-
-}
 //getUserById
-const getUserById = async (req,res)=>{
+const getUserById = async (req, res) => {
 
   //req.params.id
 
   const foundUser = await userModel.findById(req.params.id)
   res.json({
-    message:"user fatched..",
-    data:foundUser
+    message: "user fetched..",
+    data: foundUser
   })
 
 }
 
 
-//exports
+
 module.exports = {
-    getAllUsers,addUser,deleteUser,getUserById,loginUser,signup,addUserWithProfileImage
+  getUserById, loginUser, signup
 
 
-    
+
 }

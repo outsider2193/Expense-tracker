@@ -3,18 +3,18 @@ const mailer = require('nodemailer');
 
 ///function
 
-const sendingMail = async(to,subject,text) => {
+const sendingMail = async (to, subject, text) => {
 
     const transporter = mailer.createTransport({
         service: 'gmail',
-        auth:{
-            user:"rkpanchal1514@gmail.com",
-            pass:"qtyv osba suhv yzxx"
+        auth: {
+            user: "yogeshkarthik1524@gmail.com",
+            pass: "xats arzt onpj rbgz"
         }
     })
 
     const mailOptions = {
-        from: 'rkpanchal1514@gmail.com',
+        from: 'yogeshkarthik1524@gmail.com',
         to: to,
         subject: subject,
         text: text
@@ -27,7 +27,7 @@ const sendingMail = async(to,subject,text) => {
 
 }
 
-module.exports ={
+module.exports = {
     sendingMail
 }
 //sendingMail("samir.vithlani83955@gmail.com","Test Mail","this is test mail")

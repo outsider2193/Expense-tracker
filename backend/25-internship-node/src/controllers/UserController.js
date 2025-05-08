@@ -6,6 +6,7 @@ const multer = require("multer");
 const resetkey = "yourresetkey"
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 
 const storage = multer.diskStorage({
@@ -75,19 +76,25 @@ const loginUser = async (req, res) => {
   }
 };
 
-exports.forgotPassword = async (req, res) => {
+// Forgot Password
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await userModel.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Generate a secure random token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = Date.now() + 30 * 60 * 1000; // 30 minutes
 
-    const token = jwt.sign({ id: user._id }, resetkey, { expiresIn: "30m" });
+    // Save token and expiry to user
+    user.resetToken = resetToken;
+    user.resetTokenExpiry = resetTokenExpiry;
+    await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
 
-
-
+    // Send email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -96,62 +103,54 @@ exports.forgotPassword = async (req, res) => {
       },
     });
 
-
     await transporter.sendMail({
       from: "yogeshkarthik1524@gmail.com",
       to: user.email,
       subject: "Password Reset Link",
-      html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in 15 minutes.</p>`,
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in 30 minutes.</p>`,
     });
 
     res.status(200).json({ message: "Reset link sent to your email" });
   } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+// Reset Password
+const resetPassword = async (req, res) => {
+  const { password } = req.body;
+  const token = req.params.token;
+
+  try {
+    const user = await userModel.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("Reset password error:", err);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 
-exports.resetPassword = async (req, res) => {
-  const { newPassword } = req.body;
-  const token = req.params.token;
-
-  try {
-
-    const decoded = jwt.verify(token, resetkey);
-    const userId = decoded.id;
-
-    const user = await userModel.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    user.password = hashedPassword;
-    await user.save();
-
-    res.status(200).json({ message: "Password reset successful" });
-  } catch (err) {
-    console.error("Password reset failed", err);
-    return res.status(400).json({ message: "Invalid or expired token" });
-  }
-};
-//getUserById
-const getUserById = async (req, res) => {
-
-  //req.params.id
-
-  const foundUser = await userModel.findById(req.params.id)
-  res.json({
-    message: "user fetched..",
-    data: foundUser
-  })
-
-}
-
-
 
 module.exports = {
-  getUserById, loginUser, signup
+   loginUser, signup, resetPassword, forgotPassword
 
 
 

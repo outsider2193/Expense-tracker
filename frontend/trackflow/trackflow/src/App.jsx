@@ -32,6 +32,8 @@ import { AddExpense } from './components/user/expense/AddExpense'
 import { UpdateExpense } from './components/user/expense/UpdateExpense'
 import { UpdateFinancialGoal } from './components/user/financialgoals/UpdateFinancialGoal'
 import { AdminDashboard } from './components/admin/AdminDashboard'
+import ForgotPassword from './components/common/ForgotPassword'
+import ResetPassword from './components/common/ResetPassword'
 
 
 function App() {
@@ -54,6 +56,9 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/" element={<LandingPage />}></Route>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+
           <Route path="" element={<PrivateRoutes />}>
 
             <Route path="/user" element={<UserSidebar />}>

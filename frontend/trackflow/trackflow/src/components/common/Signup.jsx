@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -106,11 +106,17 @@ export const Signup = () => {
               helperText={errors.age?.message}
             />
 
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
               Sign Up
             </Button>
           </Box>
         </form>
+        <div className="text-center mt-4">
+          <span>Already have an account? </span>
+          <Link to="/login" className="text-decoration-none">
+            Login
+          </Link>
+        </div>
       </Paper>
     </Container>
   );

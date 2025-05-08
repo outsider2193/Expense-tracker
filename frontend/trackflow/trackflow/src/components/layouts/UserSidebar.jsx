@@ -7,7 +7,7 @@ export const UserSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  
+
   const [openSections, setOpenSections] = useState({
     income: false,
     budget: false,
@@ -21,7 +21,7 @@ export const UserSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  
+
   const toggleSection = (section) => {
     setOpenSections({
       ...openSections,
@@ -42,9 +42,9 @@ export const UserSidebar = () => {
         data-bs-theme="dark"
       >
         <div className="sidebar-brand">
-          <a href="./index.html" className="brand-link">
-            <span className="brand-text fw-light">Expense tracker</span>
-          </a>
+          <Link to="/" className="brand-link">
+            <span className="brand-text fw-light">ExpensePal</span>
+          </Link>
         </div>
 
         <div className="sidebar-content">

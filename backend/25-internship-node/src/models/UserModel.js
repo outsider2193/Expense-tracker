@@ -23,6 +23,12 @@ const userSchema = new Schema({
         type:String,
         unique:true
     },
+    resetToken: { 
+        type: String 
+    },
+    resetTokenExpiry: { 
+        type: Date 
+    },
     role: { type: String, enum: [ "user"] },
     // profileImage:{
     //     type: String,

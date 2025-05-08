@@ -32,17 +32,15 @@ import { AddExpense } from './components/user/expense/AddExpense'
 import { UpdateExpense } from './components/user/expense/UpdateExpense'
 import { UpdateFinancialGoal } from './components/user/financialgoals/UpdateFinancialGoal'
 import { AdminDashboard } from './components/admin/AdminDashboard'
-// import "./assets/adminlte.min.css";
-// import "./assets/adminlte.min.css"
+
 
 function App() {
-  // const [count, setCount] = useState(0)
   axios.defaults.baseURL = "http://localhost:3000"
   const location = useLocation();
 
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/signup") {
-      document.body.className = ""; // Remove the unwanted class for login and signup
+      document.body.className = ""; 
     } else {
       document.body.className =
         "layout-fixed sidebar-expand-lg bg-body-tertiary ";

@@ -1,25 +1,38 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  build: {
-    // Use ESM format for better compatibility
-    target: 'esnext',
-    outDir: 'dist',
-    emptyOutDir: true,
-    minify: 'esbuild',
-    rollupOptions: {
-      // Explicitly mark React as external
-      external: ['react', 'react-dom'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
-        },
-        format: 'esm'
+  plugins: [
+    react({
+      // Use automatic JSX transform
+      jsxRuntime: 'automatic',
+      // But don't import from 'react/jsx-runtime'
+      jsxImportSource: 'react',
+      // Use explicit React import for JSX
+      babel: {
+        plugins: [
+          ['@babel/plugin-transform-react-jsx', {
+            runtime: 'automatic'
+          }]
+        ]
       }
+    })
+  ],
+  build: {
+    // Tell Rollup to include CJS modules in its bundle
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    }
+  },
+  resolve: {
+    // Force Vite to use node_modules copies of deps
+    dedupe: ['react', 'react-dom']
+  },
+  optimizeDeps: {
+    // More aggressive deps optimization
+    esbuildOptions: {
+      target: 'esnext'
     }
   }
 });

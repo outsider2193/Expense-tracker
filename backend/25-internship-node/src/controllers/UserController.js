@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const mailUtil = require("../utils/MailUtil")
 const multer = require("multer");
 const resetkey = "yourresetkey"
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
 
 const storage = multer.diskStorage({
   destination: "./uploads",
@@ -81,8 +84,8 @@ exports.forgotPassword = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, resetkey, { expiresIn: "30m" });
 
+    const resetLink = `http://localhost:5173/reset-password/${token}`;
 
-    const resetLink = `"http://localhost:5173"/reset-password/${token}`;
 
 
     const transporter = nodemailer.createTransport({

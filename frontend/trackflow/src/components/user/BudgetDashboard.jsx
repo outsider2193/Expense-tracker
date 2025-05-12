@@ -48,12 +48,12 @@ export const BudgetDashboard = () => {
   };
 
   return (
-    <div>
+    <div style={{ padding: "0 24px" }}>
       <h2>Budget Dashboard</h2>
       <Button variant="contained" color="primary" onClick={() => navigate("/user/addbudget")}>
         Add Budget
       </Button>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{ marginTop: "20px" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -72,7 +72,7 @@ export const BudgetDashboard = () => {
                 <TableCell>{new Date(budget.startDate).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(budget.endDate).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => navigate(`/user/updatebudget/${budget._id}`)}>
+                  <Button variant="contained" color="secondary" style={{ marginRight: "8px" }} onClick={() => navigate(`/user/updatebudget/${budget._id}`)}>
                     Edit
                   </Button>
                   <Button variant="contained" color="error" onClick={() => handleDelete(budget._id)}>
@@ -84,7 +84,7 @@ export const BudgetDashboard = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <h3>Budget Overview</h3>
+      <h3 style={{ marginTop: "30px" }}>Budget Overview</h3>
       <Bar data={chartData} />
     </div>
   );

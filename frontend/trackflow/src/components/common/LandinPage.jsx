@@ -213,9 +213,6 @@ const LandingPage = () => {
                     <div className="card-body p-4">
                       <p className="card-text text-dark">{testimonial.text}</p>
                       <div className="d-flex align-items-center mt-3">
-                        <div className="mr-3">
-                          <img src={`/api/placeholder/50/50`} className="rounded-circle" alt="User" />
-                        </div>
                         <div>
                           <h6 className="mb-0 text-dark">{testimonial.name}</h6>
                           <small className="text-secondary">{testimonial.role}</small>
@@ -243,40 +240,40 @@ const LandingPage = () => {
         </div>
 
         {/* Footer */}
-        <footer className="main-footer bg-light pt-5 pb-3" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <footer className="main-footer bg-dark pt-5 pb-3" style={{ fontFamily: "'Poppins', sans-serif" }}>
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-4 mb-4">
-                <h5 className="text-dark">About ExpensePal</h5>
-                <p className="text-muted">
+                <h5 className="text-light">About ExpensePal</h5>
+                <p className="text-light">
                   ExpensePal is your trusted partner in managing personal and business finances. Budget smarter, save more.
                 </p>
               </div>
               <div className="col-md-4 mb-4">
-                <h5 className="text-dark">Quick Links</h5>
+                <h5 className="text-light">Quick Links</h5>
                 <ul className="list-unstyled">
-                  <li><a href="#features" className="text-muted">Features</a></li>
-                  <li><a href="#users" className="text-muted">Users</a></li>
-                  <li><a href="#testimonials" className="text-muted">Testimonials</a></li>
-                  <li><a href="/login" className="text-muted">Login</a></li>
-                  <li><a href="/signup" className="text-muted">Sign Up</a></li>
+                  <li><a href="#features" className="text-light">Features</a></li>
+                  <li><a href="#users" className="text-light">Users</a></li>
+                  <li><a href="#testimonials" className="text-light">Testimonials</a></li>
+                  <li><a href="/login" className="text-light">Login</a></li>
+                  <li><a href="/signup" className="text-light">Sign Up</a></li>
                 </ul>
               </div>
               <div className="col-md-4 mb-4">
-                <h5 className="text-dark">Contact</h5>
-                <p className="text-muted">
+                <h5 className="text-light">Contact</h5>
+                <p className="text-light">
                   Email: support@expensepal.com<br />
                   Phone: +1 (234) 567-8901
                 </p>
                 <div className="d-flex gap-2">
-                  <a href="#" className="text-dark"><i className="fab fa-facebook fa-lg"></i></a>
-                  <a href="#" className="text-dark"><i className="fab fa-twitter fa-lg"></i></a>
-                  <a href="#" className="text-dark"><i className="fab fa-instagram fa-lg"></i></a>
+                  <a href="#" className="text-light"><i className="fab fa-facebook fa-lg"></i></a>
+                  <a href="#" className="text-light"><i className="fab fa-twitter fa-lg"></i></a>
+                  <a href="#" className="text-light"><i className="fab fa-instagram fa-lg"></i></a>
                 </div>
               </div>
             </div>
             <div className="text-center mt-4">
-              <small className="text-muted">&copy; 2025 ExpensePal. All rights reserved.</small>
+              <small className="text-light">&copy; 2025 ExpensePal. All rights reserved.</small>
             </div>
           </div>
         </footer>
